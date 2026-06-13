@@ -1810,33 +1810,36 @@ export default function LoadSimulatorModal({
               </div>
               <div className="flex items-center gap-3">
                 {externalUser && (
-                  <span className="text-[10px] text-slate-400 bg-surface-700 px-2.5 py-1 rounded-lg border border-surface-600 truncate max-w-[140px] shrink-0">
+                  <span className="text-[10px] text-slate-400 bg-surface-700 px-2.5 py-1 rounded-lg border border-surface-600 truncate max-w-[100px] shrink-0" title={externalUser.nombres}>
                     👤 {externalUser.nombres}
                   </span>
                 )}
                 <button
                   onClick={handleSaveToSupabase}
                   disabled={savingSupabase}
-                  className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-orange-300 bg-orange-950/40 hover:bg-orange-900/30 border border-orange-800/40 transition-all shrink-0 disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-[11px] font-medium text-orange-300 bg-orange-950/40 hover:bg-orange-900/30 border border-orange-800/40 transition-all shrink-0 disabled:opacity-50"
                 >
-                  {savingSupabase ? 'Guardando...' : 'Guardar en Supabase'}
+                  <Database size={11} />
+                  {savingSupabase ? 'Guardando...' : 'Guardar'}
                 </button>
                 {externalUser && (
                   <a
                     href={`${API_BASE_URL}/api/external/autologin?email=${externalUser.email}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-purple-300 bg-purple-950/40 hover:bg-purple-900/30 border border-purple-800/40 transition-all shrink-0"
+                    className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-[11px] font-medium text-purple-300 bg-purple-950/40 hover:bg-purple-900/30 border border-purple-800/40 transition-all shrink-0"
                   >
-                    Ver mis guardados
+                    <Users size={11} />
+                    Mis Guardados
                   </a>
                 )}
                 <a
                   href={pdfModalUrl}
                   download={`analisis_${uploadedFile?.name.substring(0, uploadedFile.name.lastIndexOf('.')) || 'reporte'}.pdf`}
-                  className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/30 border border-emerald-800/40 transition-all shrink-0"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-[11px] font-medium text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/30 border border-emerald-800/40 transition-all shrink-0"
                 >
-                  Descargar PDF
+                  <Download size={11} />
+                  Descargar
                 </a>
               </div>
             </div>
