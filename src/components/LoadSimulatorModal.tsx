@@ -1831,9 +1831,10 @@ export default function LoadSimulatorModal({
                     setPdfModalUrl(null)
                     setAnalysisData(null)
                   }}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-white hover:bg-surface-600 transition-all shrink-0"
+                  className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-red-300 bg-red-950/40 hover:bg-red-900/30 border border-red-800/40 transition-all shrink-0 active:scale-[0.98]"
                 >
-                  <X size={14} />
+                  <X size={12} />
+                  Cerrar
                 </button>
               </div>
             </div>
