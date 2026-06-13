@@ -1766,6 +1766,19 @@ export default function LoadSimulatorModal({
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-3.5 bg-surface-800 border-b border-surface-600 shrink-0">
               <div className="flex items-center gap-4 flex-wrap">
+                <button
+                  onClick={() => {
+                    URL.revokeObjectURL(pdfModalUrl)
+                    setPdfModalUrl(null)
+                    setAnalysisData(null)
+                  }}
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-xs font-semibold text-slate-300 bg-surface-700 hover:bg-surface-600 border border-surface-600 transition-all shrink-0 active:scale-[0.98]"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+                  </svg>
+                  Volver
+                </button>
                 <span className="text-sm font-bold text-white shrink-0">Documentación y Análisis</span>
                 {/* Tabs */}
                 <div className="flex items-center gap-1 bg-surface-700 p-0.5 rounded-lg border border-surface-600">
@@ -1825,17 +1838,6 @@ export default function LoadSimulatorModal({
                 >
                   Descargar PDF
                 </a>
-                <button
-                  onClick={() => {
-                    URL.revokeObjectURL(pdfModalUrl)
-                    setPdfModalUrl(null)
-                    setAnalysisData(null)
-                  }}
-                  className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-red-300 bg-red-950/40 hover:bg-red-900/30 border border-red-800/40 transition-all shrink-0 active:scale-[0.98]"
-                >
-                  <X size={12} />
-                  Cerrar
-                </button>
               </div>
             </div>
 
