@@ -206,6 +206,8 @@ export interface ModalActivityUpdate {
   latency:      number
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
 export default function LoadSimulatorModal({
   onClose,
   standalone = false,
@@ -296,7 +298,7 @@ export default function LoadSimulatorModal({
       const formData = new FormData()
       formData.append('file', uploadedFile)
 
-      const response = await fetch('http://localhost:3000/api/v1/analyze?format=json', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/analyze?format=json`, {
         method: 'POST',
         body: formData,
       })
@@ -333,7 +335,7 @@ export default function LoadSimulatorModal({
     setLoadingConvert(true)
     setConvertedCode('')
     try {
-      const response = await fetch('http://localhost:3000/convert', {
+      const response = await fetch(`${API_BASE_URL}/convert`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -359,7 +361,7 @@ export default function LoadSimulatorModal({
     setLoadingTestData(true)
     setTestData(null)
     try {
-      const response = await fetch('http://localhost:3000/generate-data', {
+      const response = await fetch(`${API_BASE_URL}/generate-data`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
