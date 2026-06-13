@@ -404,7 +404,11 @@ export default function LoadSimulatorModal({
       })
       const result = await response.json()
       if (result.success) {
-        setConvertedCode(result.convertedCode)
+        if (typeof result.convertedCode === 'object' && result.convertedCode !== null) {
+          setConvertedCode(JSON.stringify(result.convertedCode, null, 2))
+        } else {
+          setConvertedCode(result.convertedCode || '')
+        }
       } else {
         setConvertedCode(`Error: ${result.error}`)
       }
