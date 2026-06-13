@@ -1295,7 +1295,7 @@ export default function LoadSimulatorModal({
               </button>
             </div>
             <div className={`sm:w-60 sm:border-r border-surface-600 flex-col shrink-0 sm:overflow-y-auto bg-surface-800/40 ${mobileConfigOpen ? 'flex' : 'hidden sm:flex'}`}>
-              {standalone && onBack && status === 'idle' && (
+              {standalone && onBack && status !== 'running' && (
                 <div className="px-4 pt-4 pb-0">
                   <button
                     onClick={onBack}
