@@ -1,0 +1,15 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/simulador",
+      "destination": "/simulator.html",
+      "permanent": true
+    },
+    {
+      "source": "/simulator",
+      "destination": "/simulator.html",
+      "permanent": true
+    }
+  ]
+}
