@@ -6,6 +6,7 @@ import {
 import { useStore } from '../store/useStore'
 import { ENGINE_CONFIGS } from '../types'
 import type { EngineType } from '../types'
+import AuthModal from './AuthModal'
 
 // ─── SVG Live Chart ───────────────────────────────────────────────────────────
 
@@ -237,6 +238,58 @@ export default function LoadSimulatorModal({
   const [loadingTestData, setLoadingTestData] = useState(false)
   const [rowsCount, setRowsCount] = useState<number>(5)
 
+  // Supabase states
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [externalUser, setExternalUser] = useState<any>(() => {
+    const stored = sessionStorage.getItem('external_user')
+    return stored ? JSON.parse(stored) : null
+  })
+  const [savingSupabase, setSavingSupabase] = useState(false)
+
+  const handleSaveToSupabase = async () => {
+    if (!analysisData) return
+    if (!externalUser) {
+      setShowAuthModal(true)
+      return
+    }
+
+    const defaultName = uploadedFile ? uploadedFile.name.substring(0, uploadedFile.name.lastIndexOf('.')) + '_doc' : 'Reporte'
+    const nombreDoc = prompt('Ingresa un nombre para guardar esta documentación en Supabase:', defaultName)
+    if (!nombreDoc) return
+
+    setSavingSupabase(true)
+    try {
+      const body = {
+        userId: externalUser.id,
+        nombre: nombreDoc,
+        acceso: 'Personal',
+        contenido: {
+          documentation: analysisData.documentationMarkdown || '',
+          schema: analysisData.schema || null,
+          diagramSvg: analysisData.diagram || ''
+        },
+        pdfBase64: analysisData.pdfBase64
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/external/documentos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+
+      const result = await response.json()
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al guardar el documento')
+      }
+
+      alert('¡Documento guardado exitosamente en Supabase!')
+    } catch (err: any) {
+      alert('Error al guardar: ' + err.message)
+    } finally {
+      setSavingSupabase(false)
+    }
+  }
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -337,7 +390,13 @@ export default function LoadSimulatorModal({
     try {
       const response = await fetch(`${API_BASE_URL}/convert`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(externalUser ? {
+            'x-user-id': externalUser.id,
+            'x-user-email': externalUser.email
+          } : {})
+        },
         body: JSON.stringify({
           schema: analysisData.schema,
           targetFormat: format,
@@ -363,7 +422,13 @@ export default function LoadSimulatorModal({
     try {
       const response = await fetch(`${API_BASE_URL}/generate-data`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(externalUser ? {
+            'x-user-id': externalUser.id,
+            'x-user-email': externalUser.email
+          } : {})
+        },
         body: JSON.stringify({
           schema: analysisData.schema,
           config: { rows: rowsCount },
@@ -1727,6 +1792,28 @@ export default function LoadSimulatorModal({
                 </div>
               </div>
               <div className="flex items-center gap-3">
+                {externalUser && (
+                  <span className="text-[10px] text-slate-400 bg-surface-700 px-2.5 py-1 rounded-lg border border-surface-600 truncate max-w-[140px] shrink-0">
+                    👤 {externalUser.nombres}
+                  </span>
+                )}
+                <button
+                  onClick={handleSaveToSupabase}
+                  disabled={savingSupabase}
+                  className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-orange-300 bg-orange-950/40 hover:bg-orange-900/30 border border-orange-800/40 transition-all shrink-0 disabled:opacity-50"
+                >
+                  {savingSupabase ? 'Guardando...' : 'Guardar en Supabase'}
+                </button>
+                {externalUser && (
+                  <a
+                    href={`${API_BASE_URL}/api/external/autologin?email=${externalUser.email}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-purple-300 bg-purple-950/40 hover:bg-purple-900/30 border border-purple-800/40 transition-all shrink-0"
+                  >
+                    Ver mis guardados
+                  </a>
+                )}
                 <a
                   href={pdfModalUrl}
                   download={`analisis_${uploadedFile?.name.substring(0, uploadedFile.name.lastIndexOf('.')) || 'reporte'}.pdf`}
@@ -1842,6 +1929,11 @@ export default function LoadSimulatorModal({
                       <option value="postgresql">PostgreSQL</option>
                       <option value="sqlite">SQLite</option>
                       <option value="mongodb">MongoDB</option>
+                      <option value="json_schema">JSON Schema</option>
+                      <option value="json_crack">JSON Crack (JSONC)</option>
+                      <option value="prisma">Prisma</option>
+                      <option value="graphql">GraphQL</option>
+                      <option value="yaml">YAML</option>
                     </select>
                     {loadingConvert && <span className="text-xs text-slate-500 animate-pulse">Convirtiendo...</span>}
                   </div>
@@ -1892,6 +1984,15 @@ export default function LoadSimulatorModal({
           </div>
         </div>
       )}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={(user) => {
+          setExternalUser(user)
+          sessionStorage.setItem('external_user', JSON.stringify(user))
+          setShowAuthModal(false)
+        }}
+      />
     </div>
   )
 }
